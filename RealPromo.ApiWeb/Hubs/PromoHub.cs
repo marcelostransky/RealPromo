@@ -16,17 +16,17 @@ namespace RealPromo.ApiWeb.Hubs
         * hub -> cliente      (Receber Promoção)
         */
 
-        public async Task CadastrarPromocao(Promocao promocao)
+        public async Task CadastrarPromocao(MerchantOrderDTO orderPayment)
         {
             /*
              * Banco
              * Queue/Sheduler
              * Notificar o Usuario (SignalR)
              */
-            var pro = promocao;
+            var pro = orderPayment;
 
             await Clients.Caller.SendAsync("CadastradoSucesso");  //Notificar caller -> cadastro realizado com sucesso
-            await Clients.Others.SendAsync("ReceberPromocao", promocao); //Notificar que a promoção chegou
+            await Clients.Others.SendAsync("ReceberPromocao", orderPayment); //Notificar que a promoção chegou
         }
     }
 }

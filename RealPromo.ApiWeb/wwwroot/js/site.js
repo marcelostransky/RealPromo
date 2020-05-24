@@ -27,11 +27,20 @@ connection.on("ReceberPromocao", function (promocao) {
     var containerChamada = document.createElement("div");
     containerChamada.setAttribute("class", "container-chamada");
     var h1Titulo = document.createElement("h1");
-    h1Titulo.innerText = promocao.empresa;
+    h1Titulo.innerText = promocao.merchantName;
+    var h2Titulo = document.createElement("h3");
+    h2Titulo.innerText = promocao.merchantId;
     var p1 = document.createElement("p");
     var p2 = document.createElement("p");
-    p1.innerText = promocao.chamada;
-    p2.innerText = promocao.regras;
+    var p3 = document.createElement("p");
+    var p4 = document.createElement("p");
+    var p5 = document.createElement("p");
+
+    p1.innerText = promocao.orders[0].orderId;
+    p2.innerText = promocao.orders[0].orderUif;
+    p3.innerText = promocao.orders[0].customerPhoneNumber;
+    p4.innerText = promocao.orders[0].paymentValue;
+    p5.innerText = promocao.orders[0].paid !== 0 ? true : false;
     var containerBotao = document.createElement("div");
     containerBotao.setAttribute("class", "container-botao");
 
@@ -40,8 +49,12 @@ connection.on("ReceberPromocao", function (promocao) {
     link.innerHTML = "Eu quero agora";
 
     containerChamada.appendChild(h1Titulo);
+    containerChamada.appendChild(h2Titulo);
     containerChamada.appendChild(p1);
     containerChamada.appendChild(p2);
+    containerChamada.appendChild(p3);
+    containerChamada.appendChild(p4);
+    containerChamada.appendChild(p5);
     containerBotao.appendChild(link);
 
     containerPromo.appendChild(containerChamada);
@@ -53,14 +66,29 @@ connection.on("ReceberPromocao", function (promocao) {
 var btnCadsbtnCadastrar = document.getElementById("BtnCadastrar");
 if (btnCadsbtnCadastrar !== null) {
     btnCadsbtnCadastrar.addEventListener("click", function () {
-        var empresa = document.getElementById("Empresa").value;
-        var chamada = document.getElementById("Chamada").value;
-        var regras = document.getElementById("Regras").value;
-        var enderecoUrl = document.getElementById("EnderecoUrl").value;
+        var merchantName = document.getElementById("Empresa").value;
+        var merchantId = document.getElementById("EmpresaId").value;
+        var orderId = document.getElementById("OrderId").value;
+        var orderUif = document.getElementById("OrderUif").value;
+        var customerPhoneNumber = document.getElementById("CustomerPhoneNumber").value;
+        var paymentValue = document.getElementById("PaymentValue").value;
+        var paid = document.getElementById("Paid").value;
 
-        var promocao = { empresa, chamada, regras, enderecoUrl };
+        var orderPayment =
+        {
+            "MerchantId": merchantId,
+            "MerchantName": merchantName,
+            "orders": [
+                {
+                    "OrderId": orderId,
+                    "orderUif": orderUif,
+                    "customerPhoneNumber": customerPhoneNumber,
+                    "paymentValue": paymentValue,
+                    "paid": paid
+                }]
+        }
 
-        connection.invoke("CadastrarPromocao", promocao)
+        connection.invoke("CadastrarPromocao", orderPayment)
             .then(function () {
                 console.info("Cadastrado com sucesso");
             })
@@ -69,7 +97,7 @@ if (btnCadsbtnCadastrar !== null) {
             }
             );
 
-       
+
         //TODO - SignalR Cahamar o Cadastro de promocao
     })
 }
